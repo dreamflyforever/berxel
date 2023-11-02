@@ -1,0 +1,101 @@
+<launch>
+    <arg name="serial_no"                           default="" />
+    <arg name="usb_bus"                             default="0" />
+    <arg name="usb_port"                            default="" />
+    <arg name="camera"                              default="berxel_camera" />
+    <arg name="tf_prefix"                           default="$(arg camera)"/>
+    <arg name="stream_flag"                         default="1" />
+    <arg name="stream_type"                         default="2" />
+    <arg name="color_width"                         default="640" />
+    <arg name="color_height"                        default="400" />
+    <arg name="depth_width"                         default="640" />
+    <arg name="depth_height"                        default="400" />
+    <arg name="ir_width"                            default="640" />
+    <arg name="ir_height"                           default="400" />
+    <!--Depth fps  (640*400/ 320*200 @fps[5,10,15,20,25,30]   1280*800-> 8fps)   -->
+    <arg name="depth_fps"                           default="30" />
+    <!--Dpeht align to rgb  true : enable   false : disable-->
+    <arg name="enable_align"                        default="false" />
+    <!--Publish point cloud  true : enable  false ： disable-->
+    <arg name="enable_pointcloud"                   default="true" />
+    <!--Publish the rgb + point cloud  true : enable  false : disable-->
+    <arg name="enable_color_pointcloud"             default="false" />
+    <!--Depth denoise    true : enable  false : disable-->
+	<arg name="enable_denoise"                      default="false" />
+    <!--Temperature compensation    true ：enable  false ：disable-->
+    <arg name="enable_temperature_compensation"     default="false" />
+    <!--Distance check   true : enable   false : disable-->
+	<arg name="enable_distance_check"               default="false" />
+    <!--Ordered point cloud    true : ordered point cloud  false : disordered point cloud-->
+    <arg name="enable_ordered_pointcloud"           default="true" />
+    <!--Timestamp type    true : use image timestamp    false : use ros::time-->
+    <arg name="enable_device_timestamp"             default="true" />
+    <!-- Ordered point cloud invalid point data format  true : 0   false : 0xFFFFFFFF-->
+    <arg name="enable_invalid_point_data_zero"      default="true" />
+    <!--Enable depth confidence	  true : enable  false : disable-->
+    <arg name="enable_set_depth_Confidence"         default="false" />
+    <!--Depth confidece value		range : [3-5]-->
+    <arg name="depth_confidence"                    default="3" />
+    <!--Laser current          range [8-15] (*100 ma)-->
+    <arg name="depth_current"                       default="15" />
+    <!--Enable depth auto exposure      true: enable   false : disable-->
+    <arg name="enable_depth_ae"                     default="true" />
+    <!--Depth exposure time        range[1-43] ( *0.1ms)-->
+    <arg name="depth_exposure_time"                 default="33" />
+    <!--Depth gain            range[1-4]-->
+    <arg name="depth_gain"                          default="1" />
+    <!--Edge optimization    true : enable   false : disable-->
+    <arg name="enable_edge_optimization"            default="false" />
+    <!--Hight fps mode  true : enable  false : disable-->
+    <arg name="enable_hight_fps_mode"               default="false" />
+    <!--Enable adjust the range that depth gain     true : enable  false : disable-->
+    <arg name="enable_adjust_ae_gain_range"         default="false" />
+    <!--Lower limit of range [1-4]      Need depth auto exposure-->
+    <arg name="depth_ae_gain_range_min"             default="1" />
+    <!--Lower limit of range [1-4]      Need depth auto exposure-->
+    <arg name="depth_ae_gain_range_max"             default="4" />
+    <!--enable image cache-->
+    <arg name="enable_image_cache"                  default="false" />
+    <!--Image cache count-->
+    <arg name="image_cache_count"                   default="10" />
+
+    <include file="$(find berxel_camera)/launch/include/berxel_camera_iHawk100Q.launch.xml">
+        <arg name="serial_no"                   value="$(arg serial_no)" />
+        <arg name="usb_bus"                     value="$(arg usb_bus)"/>
+        <arg name="usb_port"                    value="$(arg usb_port)" />
+        <arg name="camera"                      value="$(arg camera)" />
+        <arg name="tf_prefix"                   value="$(arg tf_prefix)"/>
+        <arg name="stream_flag"                 value="$(arg stream_flag)" />
+        <arg name="stream_type"                 value="$(arg stream_type)" />
+        <arg name="color_width"                 value="$(arg color_width)" />
+        <arg name="color_height"                value="$(arg color_height)" />
+        <arg name="depth_width"                 value="$(arg depth_width)" />
+        <arg name="depth_height"                value="$(arg depth_height)" />
+        <arg name="ir_width"                    value="$(arg ir_width)" />
+        <arg name="ir_height"                   value="$(arg ir_height)" />
+        <arg name="depth_fps"                   value="$(arg depth_fps)" />
+        <arg name="enable_align"                value="$(arg enable_align)" />
+        <arg name="enable_pointcloud"           value="$(arg enable_pointcloud)" />
+        <arg name="enable_color_pointcloud"     value="$(arg enable_color_pointcloud)" />
+        <arg name="enable_denoise"              value="$(arg enable_denoise)" />
+        <arg name="enable_temperature_compensation"     value="$(arg enable_temperature_compensation)" />
+        <arg name="enable_distance_check"       value="$(arg enable_distance_check)" />
+        <arg name="enable_ordered_pointcloud"   value="$(arg enable_ordered_pointcloud)" />
+        <arg name="enable_device_timestamp"     value="$(arg enable_device_timestamp)" />
+        <arg name="enable_invalid_point_data_zero"     value="$(arg enable_invalid_point_data_zero)" />
+        <arg name="enable_set_depth_Confidence"     value="$(arg enable_set_depth_Confidence)" />
+        <arg name="depth_confidence"            value="$(arg depth_confidence)" />
+        <arg name="depth_current"            value="$(arg depth_current)" />
+        <arg name="enable_depth_ae"            value="$(arg enable_depth_ae)" />
+        <arg name="depth_exposure_time"            value="$(arg depth_exposure_time)" />
+        <arg name="depth_gain"            value="$(arg depth_gain)" />
+        <arg name="enable_edge_optimization"            value="$(arg enable_edge_optimization)" />
+        <arg name="enable_hight_fps_mode"            value="$(arg enable_hight_fps_mode)" />
+        <arg name="enable_adjust_ae_gain_range"            value="$(arg enable_adjust_ae_gain_range)" />
+        <arg name="depth_ae_gain_range_min"            value="$(arg depth_ae_gain_range_min)" />
+        <arg name="depth_ae_gain_range_max"            value="$(arg depth_ae_gain_range_max)" />
+        <arg name="enable_image_cache"            value="$(arg enable_image_cache)" />
+        <arg name="image_cache_count"            value="$(arg image_cache_count)" />
+    </include>
+    
+</launch>

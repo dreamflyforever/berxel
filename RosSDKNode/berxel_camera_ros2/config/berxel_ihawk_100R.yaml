@@ -1,0 +1,75 @@
+/**:
+    ros__parameters:
+        stream_flag : 1
+        stream_type : 2
+        depth_width : 640
+        depth_height : 400
+        color_width : 640
+        color_height : 400
+        ir_width : 640
+        ir_height : 400
+        depth_fps : 30
+        enable_depth : true
+        enable_color : true
+        enable_ir : false
+        enable_pointcloud : true
+        enable_align : false
+        enable_denoise : false
+        enable_device_timestamp : true
+        enable_temperature_compensation : false
+        enable_ordered_pointcloud : true 
+        enable_set_depth_Confidence : false
+        depth_confidence : 3
+        depth_current : 15
+        enable_depth_ae : true
+        depth_exposure_time : 33
+        depth_gain : 1
+        enable_edge_optimization : false
+        enable_hight_fps_mode : false
+        enable_adjust_ae_gain_range : false
+        depth_ae_gain_range_min : 1
+        depth_ae_gain_range_max : 4
+
+        base_frame_id : "berxel_base_link"
+        camera_frame_id : "berxel_camera_link"
+        depth_frame_id : "berxel_camera_depth_frame"
+        ir_frame_id : "berxel_camera_ir_frame"
+        color_frame_id : "berxel_camera_color_frame"
+        depth_optical_frame_id : "berxel_camera_depth_optical_frame"
+        ir_optical_frame_id : "berxel_camera_ir_optical_frame"
+        color_optical_frame_id : "berxel_camera_color_optical_frame"
+
+        camera_link_x : 0.02265
+        camera_link_y : 0.0
+        camera_link_z : 0.0
+        camera_link_roll : 0.0
+        camera_link_pitch : 0.0
+        camera_link_yaw : 0.0
+
+        camera_rgb_frame_x : 0.0
+        camera_rgb_frame_y : 0.0100
+        camera_rgb_frame_z : 0.0
+        camera_rgb_frame_roll : 0.0
+        camera_rgb_frame_pitch : 0.0
+        camera_rgb_frame_yaw : 0.0
+
+        camera_depth_frame_x : 0.0
+        camera_depth_frame_y : 0.0200
+        camera_depth_frame_z : 0.0
+        camera_depth_frame_roll : 0.0
+        camera_depth_frame_pitch : 0.0
+        camera_depth_frame_yaw : 0.0
+
+        camera_rgb_optical_frame_x : 0.0
+        camera_rgb_optical_frame_y : 0.0
+        camera_rgb_optical_frame_z : 0.0
+        camera_rgb_optical_frame_roll : -0.5
+        camera_rgb_optical_frame_pitch : 0.0
+        camera_rgb_optical_frame_yaw : -0.5
+
+        camera_depth_optical_frame_x : 0.0
+        camera_depth_optical_frame_y : 0.0
+        camera_depth_optical_frame_z : 0.0
+        camera_depth_optical_frame_roll : -0.5
+        camera_depth_optical_frame_pitch : 0.0
+        camera_depth_optical_frame_yaw : -0.5
