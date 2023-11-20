@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <fstream>
+#include <iostream>
+#include <unistd.h>
+
 // Berxel Head File
 #include "BerxelHawkContext.h"
 #include "BerxelHawkDevice.h"
@@ -8,6 +11,30 @@
 #include "BerxelHawkDefines.h"
 #include "BerxelCommonFunc.h"
 #include "BerxelImageRender.h"
+
+/* debug printf*/
+#define DEBUG 1
+#if DEBUG
+#define os_printf(format, ...) \
+	{printf("[%s : %s : %d] ", \
+	__FILE__, __func__, __LINE__); \
+	printf(format, ##__VA_ARGS__);}
+#else
+#define os_printf(format, ...) 
+#endif
+
+
+typedef void *(*func_cb)(void * argv);
+
+typedef struct berxel_str {
+	//ob::Config * config;
+	bool rgb_flag;
+	bool depth_flag;
+	func_cb rgb_cb;
+	func_cb depth_cb;
+	double rgb_count;
+	double depth_count;
+} berxel_str;
 
 using namespace std;
 //using namespace berxel;
@@ -75,10 +102,10 @@ static bool renderImage()
 		index ++;
 		BerxelCommonFunc::getInstance()->saveRawData((uint8_t * )pHawkColorFrame->getData(), pHawkColorFrame->getDataSize() ,   "Color",   index);
 		BerxelCommonFunc::getInstance()->saveRawData((uint8_t *) pHawkDepthFrame->getData(),  pHawkDepthFrame->getDataSize() ,   "Depth",  index);
-	
+
 		BerxelCommonFunc::getInstance()->takePhoto("Color",index ,(uint8_t *)rgbImageColor, pHawkColorFrame->getWidth(),pHawkColorFrame->getHeight());
 		BerxelCommonFunc::getInstance()->takePhoto("Depth",index ,(uint8_t *)rgbImageDepth, pHawkDepthFrame->getWidth(),pHawkDepthFrame->getHeight());
-	
+
 		static berxel::BerxelHawkPoint3D point3D[1280 * 800];
 		g_pHawkDevice->convertDepthToPointCloud(pHawkDepthFrame,1000.0, point3D);
 		char filename[128] = {0};
@@ -132,7 +159,7 @@ static bool renderImage()
 
 	memset(mesgInfo ,0 ,sizeof(mesgInfo));
 	sprintf(mesgInfo , "Color:%d*%d@fps %d Depth:%d*%d@fps %d###Tempture %d####Status %s" ,
-		pHawkColorFrame->getWidth() ,pHawkColorFrame->getHeight(), pHawkColorFrame->getFPS(), pHawkDepthFrame->getWidth(), pHawkDepthFrame->getHeight(), pHawkDepthFrame->getFPS(), nTemp, temStatus);
+			pHawkColorFrame->getWidth() ,pHawkColorFrame->getHeight(), pHawkColorFrame->getFPS(), pHawkDepthFrame->getWidth(), pHawkDepthFrame->getHeight(), pHawkDepthFrame->getFPS(), nTemp, temStatus);
 
 	g_pImageRender->initView();
 	g_pImageRender->drawLine(0,	35, g_imageWidth*3 + 80, 40);
@@ -145,11 +172,11 @@ static bool renderImage()
 	g_pImageRender->drawColorImage((uint8_t*)rgbImageDepth, pHawkDepthFrame->getWidth(),  pHawkDepthFrame->getHeight(), rect);
 	g_pImageRender->drawDepthValue(pHawkDepthFrame, rect);
 	g_pImageRender->updateView();
-	
+
 	// free frame
 	g_pHawkDevice->releaseFrame(pHawkColorFrame);
 	g_pHawkDevice->releaseFrame(pHawkDepthFrame);
-   
+
 	return true;
 }
 
@@ -157,84 +184,84 @@ void keyCallBack(unsigned char key)
 {
 	switch (key)
 	{
-	case 'S':
-	case 's':
-	{
-		g_bSave = true;
-	}
-	break;
-	case 'O':
-	case 'o':
-	{
-		if (g_bTemtureOpen == false)
-		{
-			if (g_pHawkDevice) 
+		case 'S':
+		case 's':
 			{
-				g_bTemtureOpen = true;
-				g_pHawkDevice->setTemperatureCompensationEnable(g_bTemtureOpen);
+				g_bSave = true;
 			}
-		}
-	}
-	break;
-	case 'P':
-	case 'p':
-	{
-		if (g_bTemtureOpen)
-		{
-			if (g_pHawkDevice) 
+			break;
+		case 'O':
+		case 'o':
 			{
-				g_bTemtureOpen = false;
-				g_pHawkDevice->setTemperatureCompensationEnable(g_bTemtureOpen);
+				if (g_bTemtureOpen == false)
+				{
+					if (g_pHawkDevice) 
+					{
+						g_bTemtureOpen = true;
+						g_pHawkDevice->setTemperatureCompensationEnable(g_bTemtureOpen);
+					}
+				}
 			}
-		}
-	}
-	break;
-	case 'D':
-	case 'd':
-		{
-			if (g_pHawkDevice) 
+			break;
+		case 'P':
+		case 'p':
 			{
-				g_pHawkDevice->setDenoiseStatus(true);
+				if (g_bTemtureOpen)
+				{
+					if (g_pHawkDevice) 
+					{
+						g_bTemtureOpen = false;
+						g_pHawkDevice->setTemperatureCompensationEnable(g_bTemtureOpen);
+					}
+				}
 			}
-		}
-		break;
-	case 'F':
-	case 'f':
-		{
-			if (g_pHawkDevice) 
+			break;
+		case 'D':
+		case 'd':
 			{
-				g_pHawkDevice->setDenoiseStatus(false);
+				if (g_pHawkDevice) 
+				{
+					g_pHawkDevice->setDenoiseStatus(true);
+				}
 			}
-		}
-		break;
-	case 'E':
-	case 'e':
-	{
-		if (g_pHawkDevice) 
-		{
-			g_pHawkDevice->setEdgeOptimizationStatus(true);
-		}
-	}
-	break;
-	case 'R':
-	case 'r':
-	{
-		if (g_pHawkDevice) 
-		{
-			g_pHawkDevice->setEdgeOptimizationStatus(false);
-		}
-	}
-	break;
-	case 'L':
-	case 'l':
-	{
-		g_bColorDepth = !g_bColorDepth;
-	}
-	break;
+			break;
+		case 'F':
+		case 'f':
+			{
+				if (g_pHawkDevice) 
+				{
+					g_pHawkDevice->setDenoiseStatus(false);
+				}
+			}
+			break;
+		case 'E':
+		case 'e':
+			{
+				if (g_pHawkDevice) 
+				{
+					g_pHawkDevice->setEdgeOptimizationStatus(true);
+				}
+			}
+			break;
+		case 'R':
+		case 'r':
+			{
+				if (g_pHawkDevice) 
+				{
+					g_pHawkDevice->setEdgeOptimizationStatus(false);
+				}
+			}
+			break;
+		case 'L':
+		case 'l':
+			{
+				g_bColorDepth = !g_bColorDepth;
+			}
+			break;
 
-	default:
-		printf("Please input 's' or 'S'  to save image: \n");
-		break;
+		default:
+			printf("Please input 's' or 'S'  to save image: \n");
+			break;
 	}
 }
 
@@ -252,7 +279,7 @@ int Exit()
 
 	if(g_context)
 	{
-        berxel::BerxelHawkContext::destroyBerxelContext(g_context);
+		berxel::BerxelHawkContext::destroyBerxelContext(g_context);
 		g_context = NULL;
 	}
 
@@ -269,8 +296,10 @@ int creatWindow(int argc, char** argv)
 }
 
 
-int main(int argc, char** argv)
+int berxel_run(berxel_str * entity)
 {
+	int argc = 0;
+	char * argv[0];
 	//获取context
 	g_context = berxel::BerxelHawkContext::getBerxelContext();
 
@@ -278,20 +307,20 @@ int main(int argc, char** argv)
 	berxel::BerxelHawkDeviceInfo* pDeviceInfo = NULL;
 	uint32_t deviceCount = 0;
 	g_context->getDeviceList(&pDeviceInfo, &deviceCount);
-    if((deviceCount <= 0) || (NULL == pDeviceInfo))
+	if((deviceCount <= 0) || (NULL == pDeviceInfo))
 	{
 		sprintf(g_errMsg,"%s", "Get No Connected BerxelDevice");
 		return creatWindow(argc ,argv);
-    }
+	}
 
 	g_CurrentDeviceInfo = pDeviceInfo[0];
 
 	g_pHawkDevice = g_context->openDevice(g_CurrentDeviceInfo);
-    if(NULL == g_pHawkDevice)
+	if(NULL == g_pHawkDevice)
 	{
 		sprintf(g_errMsg,"%s", "Open Berxel Device Failed");
-        return creatWindow(argc ,argv);
-    }
+		return creatWindow(argc ,argv);
+	}
 
 	//同步当前系统时钟到设备中
 	g_pHawkDevice->setSystemClock();
@@ -300,7 +329,7 @@ int main(int argc, char** argv)
 	g_pHawkDevice->setStreamFlagMode(berxel::BERXEL_HAWK_MIX_STREAM_FLAG_MODE);
 
 	//设置分辨率
-    berxel::BerxelHawkStreamFrameMode colorFrameMode;
+	berxel::BerxelHawkStreamFrameMode colorFrameMode;
 	g_pHawkDevice->getCurrentFrameMode(berxel::BERXEL_HAWK_COLOR_STREAM , &colorFrameMode);
 	g_pHawkDevice->setFrameMode(berxel::BERXEL_HAWK_COLOR_STREAM, &colorFrameMode);
 
@@ -326,7 +355,7 @@ int main(int argc, char** argv)
 		sprintf(g_errMsg,"%s", "Open Berxel Stream Failed");
 		return creatWindow(argc ,argv);
 	}
-	
+
 	g_bStartStream = true;	
 
 	berxel::BerxelHawkDeviceInfo tempCurInfo;
@@ -334,10 +363,101 @@ int main(int argc, char** argv)
 	g_pHawkDevice->getCurrentDeviceInfo(&tempCurInfo);
 	g_pHawkDevice->getVersion(&tempVersions);
 	sprintf(g_deviceShowInfo , "SN :%s  SDK(%d.%d.%d) FW(%d.%d.%d) HW(%d.%d.%d) " ,tempCurInfo.serialNumber , tempVersions.sdkVersion.major ,tempVersions.sdkVersion.minor, tempVersions.sdkVersion.revision ,
-		tempVersions.fwVersion.major,tempVersions.fwVersion.minor,tempVersions.fwVersion.revision,tempVersions.hwVersion.major, tempVersions.hwVersion.minor, tempVersions.hwVersion.revision);
+			tempVersions.fwVersion.major,tempVersions.fwVersion.minor,tempVersions.fwVersion.revision,tempVersions.hwVersion.major, tempVersions.hwVersion.minor, tempVersions.hwVersion.revision);
 
 	//g_pHawkDevice->setRegistrationEnable(true);
 	creatWindow(argc,argv);
 
 	return Exit();
+}
+
+
+int rgbd_init(berxel_str ** entity, func_cb rgb, func_cb depth)
+{
+	int retval = 0;
+	*entity = (berxel_str * )malloc(sizeof(berxel_str));
+
+	if ((rgb == NULL) && ((depth == NULL))) {
+		std::cerr << "rgb or depth must have callback" << std::endl;
+		while (1);
+		retval = -1;
+	}
+	(*entity)->rgb_cb = rgb;
+	(*entity)->depth_cb = depth;
+
+	return retval;
+}
+
+int rgb_start(berxel_str * entity)
+{
+	int retval = 0;
+	if (entity != NULL) {
+	}
+	return retval;
+}
+
+int depth_start(berxel_str * entity)
+{
+	int retval = 0;
+	if (entity != NULL) {
+	}
+	return retval;
+}
+
+
+int depth_stop(berxel_str * entity)
+{
+	int retval = 0;
+	if (entity != NULL) {
+	}
+	return retval;
+}
+
+/*user API*/
+void * rgb_cb(void * argv)
+{
+	os_printf("color picture handle\n");
+	//std::shared_ptr<ob::ColorFrame> colorFrame = *(std::shared_ptr<ob::ColorFrame> *) argv;
+	//saveColor(colorFrame);
+	return NULL;
+}
+
+/*user API*/
+void * depth_cb(void * argv)
+{
+	os_printf("depth picture handle\n");
+	//std::shared_ptr<ob::DepthFrame> depthFrame = *(std::shared_ptr<ob::DepthFrame> *)argv;
+	//saveDepth(depthFrame);
+	return NULL;
+}
+
+int rgb_stop(berxel_str * entity)
+{
+	int retval = 0;
+	if (entity != NULL) {
+	}
+	return retval;
+
+}
+
+int rgbd_deinit(berxel_str * entity)
+{
+	int retval = 0;
+	free(entity);
+	return retval;
+}
+
+int main()
+{
+	berxel_str * entity;
+	rgbd_init(&entity, rgb_cb, depth_cb);
+	rgb_start(entity);
+	depth_start(entity);
+	berxel_run(entity);
+	while (1){
+		sleep(10);
+	};
+	rgb_stop(entity);
+	depth_stop(entity);
+	rgbd_deinit(entity);
 }
