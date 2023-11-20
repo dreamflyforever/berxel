@@ -23,7 +23,6 @@ public:
     virtual uint32_t getHeight() = 0;
     virtual void*    getData() = 0;
     virtual uint32_t getDataSize() = 0;
-	virtual int32_t  getTxTemperature() = 0;
 };
 
 

@@ -15,4 +15,3 @@ SUBSYSTEM=="usb", ATTR{idProduct}=="0009", ATTR{idVendor}=="0603", MODE="0666",O
 SUBSYSTEM=="usb", ATTR{idProduct}=="000a", ATTR{idVendor}=="0603", MODE="0666",OWNER="berxel",GROUP="berxel"
 SUBSYSTEM=="usb", ATTR{idProduct}=="000b", ATTR{idVendor}=="0603", MODE="0666",OWNER="berxel",GROUP="berxel"
 SUBSYSTEM=="usb", ATTR{idProduct}=="000c", ATTR{idVendor}=="0603", MODE="0666",OWNER="berxel",GROUP="berxel"
-SUBSYSTEM=="usb", ATTR{idProduct}=="000d", ATTR{idVendor}=="0603", MODE="0666",OWNER="berxel",GROUP="berxel"

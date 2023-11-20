@@ -30,7 +30,7 @@ public:
 	virtual int32_t readLightIrFrame( BerxelHawkFrame* &pSteamFrame,int32_t timeout = 30) = 0;
     virtual int32_t releaseFrame(BerxelHawkFrame* &pHawFrame) = 0;
     virtual int32_t startUpgrade(BerxelHawkUpgradeProcessCallBack pCallbacks, void* pUserData, const char* pFwFilePath) = 0;
-	virtual int32_t convertDepthToPointCloud(BerxelHawkFrame* pFrame , float factor, BerxelHawkPoint3D* pPointClouds, bool bPointCloudWall = false) = 0;
+	virtual int32_t convertDepthToPointCloud(BerxelHawkFrame* pFrame , float factor, BerxelHawkPoint3D* pPointClouds) = 0; 	
 	virtual int32_t getVersion(BerxelHawkVersions* versions) = 0;
 	virtual int32_t getCurrentDeviceInfo(BerxelHawkDeviceInfo* pDeviceInfo) = 0;
 	virtual int32_t getCameraIntriscParams(BerxelHawkCameraIntrinsic *pParams ) = 0;
@@ -45,12 +45,9 @@ public:
 	virtual int32_t getSystemClock(uint32_t *sec, uint32_t* usec) = 0;
 	virtual int32_t setNetParams(void* pData, uint32_t dataSize) = 0;
 	virtual int32_t getNetParams(void* pData, uint32_t needDataSize) = 0;
-	virtual int32_t setTemperatureParams(void* pData, uint32_t dataSize) = 0;
-	virtual int32_t getTemperatureParams(void* pData,  uint32_t *dataSize) = 0;
-	virtual int32_t openNoiseFilter(bool bEnable) = 0;
 	virtual int32_t setDepthCloseRangeDefaultGainAndExposure() = 0;
 	virtual int32_t setEdgeOptimizationStatus(bool bEnable) = 0;
-	virtual int32_t setDepthRemoteMode(bool bEnable) = 0;
+	
 	virtual int32_t getDeviceHighPrecisionTemperature(float* temperature) = 0;
 	virtual int32_t getDeviceTemperature(int32_t* temperature) = 0;
 	virtual int32_t setAdbMode(bool bOpen) = 0;
@@ -80,35 +77,14 @@ public:
 	virtual int32_t getDepthAEStatus(uint32_t* value) = 0;
 	virtual int32_t enableDeviceSlaveMode(bool bEnable) = 0;
 	virtual int32_t getDeviceMasterSlaveMode(uint32_t* value) = 0;
-	virtual int32_t setColorQuality(uint32_t nValue) = 0;
-	virtual int32_t getColorQuality(uint32_t* value) = 0;
+	virtual int32_t setColorQulity(uint32_t nValue) = 0;
+	virtual int32_t getColorQulity(uint32_t* value) = 0;
 	virtual int32_t setUserGpioCtrl(uint32_t gpio_nr, uint32_t gpio_number) = 0;
 	virtual int32_t getUserGpioCtrl(uint32_t gpio_nr, uint32_t* gpio_number) = 0;
 	virtual int32_t setCurveFilteringStatus(bool bEnable) = 0;
-	virtual int32_t setDeviceBandwidth(BerxelHawkDeviceBandwidth bandwidth) = 0;
+	virtual int32_t setDeviceBandwidth(BERXEL_DEVICE_BANDWITH bandwidth) = 0;
 	virtual int32_t setStreamStatus(bool bEnable) = 0;
 	virtual int32_t setBindCpuCore(uint32_t pData[], uint32_t nSize) = 0;
-	virtual int32_t setDepthConfidence(uint32_t nValue) = 0;
-	virtual int32_t getDepthConfidence(uint32_t* value) = 0;
-	virtual int32_t enableHightFpsMode(bool bEnable) = 0;
-	virtual int32_t setDepthTxStatus(bool bEnable) = 0;
-
-	virtual int32_t setTemperatureParamsFilePath(const char* filePath) = 0;
-	virtual int32_t setDepthAEGainRange(uint32_t min, uint32_t max) = 0;
-	virtual int32_t getDepthAEGainRange(uint32_t* min, uint32_t* max) = 0;
-	virtual int32_t setDepthAEExposureRange(uint32_t min, uint32_t mid, uint32_t max) = 0;
-	virtual int32_t getDepthAEExposureRange(uint32_t* min, uint32_t* mid, uint32_t* max) = 0;
-	virtual int32_t getDeviceLogSize(uint32_t* size) = 0;
-	virtual	int32_t getDeviceLog(void* pData, uint32_t dataSize) = 0;
-	//virtual int32_t setDevHwThremalStatus(bool bEnable) = 0;
-	virtual int32_t setDeviceTransferMode(BerxelHawkUVCMode mode) = 0;
-	virtual int32_t setTemporalDenoiseStatus(bool bEnable) = 0;
-	virtual int32_t setSpatialDenoiseStatus(bool bEnable) = 0;
-	virtual int32_t setSyncHostTime(BerxelHawkSyncTimeType type) = 0;
-
-
-	virtual int32_t rebootDevice() = 0;
-	virtual bool	deviceSupportHwTempCompenSation() = 0;
 };
 
 }

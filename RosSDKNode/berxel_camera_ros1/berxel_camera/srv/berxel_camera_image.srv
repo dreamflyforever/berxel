@@ -1,8 +1,0 @@
-time timestamp
----
-sensor_msgs/Image                   depth_data		#深度数据
-sensor_msgs/Image                   color_data		#彩色数据
-sensor_msgs/PointCloud2             point_data		#点云数据
-bool                                depth_state		#深度状态
-bool                                color_state		#彩色状态
-bool                                point_state		#点云状态

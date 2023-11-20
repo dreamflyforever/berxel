@@ -15,8 +15,7 @@ class BERXEL_HAWK_API_EXPORT BerxelHawkContext
 public:
     BerxelHawkContext();
     static BerxelHawkContext* getBerxelContext();
-	static BerxelHawkContext* getBerxelContext(const char* strLogPath);
-    static void destroyBerxelContext(BerxelHawkContext* &pBerxelContext);
+    static void destroyBerxelContext(BerxelHawkContext* &pBerxeContext);
 public:
     virtual int32_t getDeviceList(BerxelHawkDeviceInfo** pDeviceList, uint32_t* pDeviceCount) = 0;
     virtual BerxelHawkDevice* openDevice(const BerxelHawkDeviceInfo deviceInfo) = 0;
