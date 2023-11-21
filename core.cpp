@@ -1,20 +1,26 @@
 #include "core.hpp"
 
+#define VIEW 1
+
 using namespace std;
 //using namespace berxel;
 
 berxel_str * g_entity;
+bool g_view_flag;
 
 berxel::BerxelHawkContext*	 g_context = NULL;
 berxel::BerxelHawkDevice*    g_pHawkDevice = NULL;
 berxel::BerxelHawkDeviceInfo g_CurrentDeviceInfo;
+#if VIEW
 BerxelImageRender*			 g_pImageRender = NULL;
-
+#endif
 static int  g_imageWidth	 = 640;
 static int  g_imageHeight = 400;
 static char g_errMsg[256] = {0};
 static char g_deviceShowInfo[256];
+#if VIEW
 static bool g_bStartStream = false;
+#endif
 static bool g_bSave = false;
 static bool g_bColorDepth = true;
 static bool g_bTemtureOpen = false;
@@ -27,7 +33,8 @@ static bool renderImage()
 	berxel::BerxelHawkFrame *pHawkColorFrame = NULL;
 	berxel::BerxelHawkFrame *pHawkDepthFrame = NULL;
 
-	if(false == g_bStartStream)
+#if VIEW
+	if((false == g_bStartStream) && (0 == get_view()))
 	{
 		g_pImageRender->initView();
 		g_pImageRender->drawLine(0,35, g_imageWidth * 3+ 80 ,40);
@@ -36,7 +43,7 @@ static bool renderImage()
 		g_pImageRender->updateView();
 		return false;
 	}
-
+#endif
 	if(g_pHawkDevice)
 	{	
 		g_pHawkDevice->readDepthFrame(pHawkDepthFrame,30);
@@ -136,18 +143,21 @@ static bool renderImage()
 	sprintf(mesgInfo , "Color:%d*%d@fps %d Depth:%d*%d@fps %d###Tempture %d####Status %s" ,
 			pHawkColorFrame->getWidth() ,pHawkColorFrame->getHeight(), pHawkColorFrame->getFPS(), pHawkDepthFrame->getWidth(), pHawkDepthFrame->getHeight(), pHawkDepthFrame->getFPS(), nTemp, temStatus);
 
-	g_pImageRender->initView();
-	g_pImageRender->drawLine(0,	35, g_imageWidth*3 + 80, 40);
-	g_pImageRender->drawString(mesgInfo, 5, 25, (void *)0x0008);
-	g_pImageRender->drawLine(0,g_imageHeight  + 45, g_imageWidth * 3 + 80 ,40);
-	g_pImageRender->drawString(g_deviceShowInfo, 5, g_imageHeight + 40 + 25 , (void *)0x0007);
-	WinRect rect(40, 40, g_imageWidth, g_imageHeight);
-	g_pImageRender->drawColorImage((uint8_t*)rgbImageColor, pHawkColorFrame->getWidth(), pHawkColorFrame->getHeight(), rect);
-	rect.x += g_imageWidth + 2;
-	g_pImageRender->drawColorImage((uint8_t*)rgbImageDepth, pHawkDepthFrame->getWidth(),  pHawkDepthFrame->getHeight(), rect);
-	g_pImageRender->drawDepthValue(pHawkDepthFrame, rect);
-	g_pImageRender->updateView();
-
+#if VIEW
+	if (1 == get_view()) {
+		g_pImageRender->initView();
+		g_pImageRender->drawLine(0,	35, g_imageWidth*3 + 80, 40);
+		g_pImageRender->drawString(mesgInfo, 5, 25, (void *)0x0008);
+		g_pImageRender->drawLine(0,g_imageHeight  + 45, g_imageWidth * 3 + 80 ,40);
+		g_pImageRender->drawString(g_deviceShowInfo, 5, g_imageHeight + 40 + 25 , (void *)0x0007);
+		WinRect rect(40, 40, g_imageWidth, g_imageHeight);
+		g_pImageRender->drawColorImage((uint8_t*)rgbImageColor, pHawkColorFrame->getWidth(), pHawkColorFrame->getHeight(), rect);
+		rect.x += g_imageWidth + 2;
+		g_pImageRender->drawColorImage((uint8_t*)rgbImageDepth, pHawkDepthFrame->getWidth(),  pHawkDepthFrame->getHeight(), rect);
+		g_pImageRender->drawDepthValue(pHawkDepthFrame, rect);
+		g_pImageRender->updateView();
+	}
+#endif
 	// free frame
 	g_pHawkDevice->releaseFrame(pHawkColorFrame);
 	g_pHawkDevice->releaseFrame(pHawkDepthFrame);
@@ -261,13 +271,14 @@ int Exit()
 	return 0;
 }
 
-
 int creatWindow(int argc, char** argv)
 {
+#if VIEW
 	g_pImageRender = new BerxelImageRender(argc, argv, "Berxel HawkColorDepth", g_imageWidth * 2 + 80 , g_imageHeight + 80); // window title & size
 	g_pImageRender->setInfoCallback(renderImage , keyCallBack);
 	if (get_view())
 		g_pImageRender->startView();
+#endif
 	return 0;
 }
 
@@ -336,8 +347,9 @@ int berxel_run(berxel_str * entity)
 		return creatWindow(argc ,argv);
 	}
 
+#if VIEW
 	g_bStartStream = true;	
-
+#endif
 	berxel::BerxelHawkDeviceInfo tempCurInfo;
 	berxel::BerxelHawkVersions   tempVersions;
 	g_pHawkDevice->getCurrentDeviceInfo(&tempCurInfo);
@@ -346,7 +358,12 @@ int berxel_run(berxel_str * entity)
 			tempVersions.fwVersion.major,tempVersions.fwVersion.minor,tempVersions.fwVersion.revision,tempVersions.hwVersion.major, tempVersions.hwVersion.minor, tempVersions.hwVersion.revision);
 
 	//g_pHawkDevice->setRegistrationEnable(true);
-	creatWindow(argc,argv);
+#if VIEW
+	if (1 == get_view())
+		creatWindow(argc,argv);
+#endif
+	while (0 == get_view())
+		renderImage();
 
 	return Exit();
 }
@@ -409,7 +426,6 @@ int rgb_stop(berxel_str * entity)
 
 }
 
-bool g_view_flag;
 int set_view(bool flag)
 {
 	g_view_flag = flag;
