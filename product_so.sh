@@ -8,7 +8,7 @@ if [[ $get_arch =~ "x86_64" ]];then
 elif [[ $get_arch =~ "aarch64" ]];then
     echo "this is arm64"
     g++ -o libberxel.so core.cpp Common/BerxelCommonFunc.cpp Common/BerxelImageRender.cpp  -shared -fPIC -I. -I Include  -I Common -Llibs_arm64 -lBerxelHawk -lglut -lGL 
-    mv libberxel.so libs/
+    mv libberxel.so libs_arm64/
 elif [[ $get_arch =~ "mips64" ]];then
     echo "this is mips64"
 else

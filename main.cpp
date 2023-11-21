@@ -1,6 +1,9 @@
 #include "core.hpp"
 
-void save_raw_data(uint8_t* pRawData, int dataSize, string stringName, int index)
+void save_raw_data(uint8_t* pRawData,
+			int dataSize,
+			string stringName,
+			int index)
 {
 	char strRawDataName[128] =  {0};
 	sprintf(strRawDataName,"%s_%d.raw" ,stringName.c_str(),  index);
