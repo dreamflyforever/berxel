@@ -23,7 +23,6 @@
 #define os_printf(format, ...) 
 #endif
 
-
 typedef void *(*func_cb)(void * argv);
 
 typedef struct berxel_str {
@@ -35,6 +34,13 @@ typedef struct berxel_str {
 	double rgb_count;
 	double depth_count;
 } berxel_str;
+
+berxel_str * g_entity;
+
+typedef struct img_str {
+	uint8_t * img;
+	int size;
+} img_str;
 
 using namespace std;
 //using namespace berxel;
@@ -85,7 +91,7 @@ static bool renderImage()
 			return false;
 		}
 	}
-
+	
 	if (g_bColorDepth) 
 	{		
 		BerxelCommonFunc::getInstance()->ImageScaleColor((uint16_t*)pHawkDepthFrame->getData(), (uint8_t*)rgbImageDepth, pHawkDepthFrame->getWidth(), pHawkDepthFrame->getHeight(),pHawkDepthFrame->getPixelType());
@@ -95,6 +101,15 @@ static bool renderImage()
 		BerxelCommonFunc::getInstance()->convertDepthToRgbByHist((uint16_t*)pHawkDepthFrame->getData(), rgbImageDepth, pHawkDepthFrame->getWidth(), pHawkDepthFrame->getHeight(), pHawkDepthFrame->getPixelType());
 	}
 	memcpy(rgbImageColor,pHawkColorFrame->getData(),pHawkColorFrame->getDataSize());
+	img_str * tmp = (img_str * )malloc(sizeof(img_str));
+	tmp->img = (uint8_t * )pHawkColorFrame->getData();
+	tmp->size = pHawkColorFrame->getDataSize();
+	g_entity->rgb_cb(tmp);
+
+	tmp->img = (uint8_t * )pHawkDepthFrame->getData();
+	tmp->size = pHawkDepthFrame->getDataSize();
+	g_entity->depth_cb(tmp);
+	free(tmp);
 
 	static int index = 0;
 	if(g_bSave)
@@ -295,11 +310,15 @@ int creatWindow(int argc, char** argv)
 	return 0;
 }
 
-
 int berxel_run(berxel_str * entity)
 {
 	int argc = 0;
 	char * argv[0];
+	if (entity != NULL) {
+		g_entity = entity;
+	} else {
+		os_printf("entity is NULL\n");
+	}
 	//»ñÈ¡context
 	g_context = berxel::BerxelHawkContext::getBerxelContext();
 
@@ -413,21 +432,42 @@ int depth_stop(berxel_str * entity)
 	return retval;
 }
 
+void save_raw_data(uint8_t* pRawData, int dataSize , string stringName, int index)
+{
+	char strRawDataName[128] =  {0};
+	sprintf(strRawDataName,"%s_%d.raw" ,stringName.c_str(),  index);
+
+	FILE* pFile = fopen(strRawDataName, "wb");
+	if(pFile)
+	{
+		fwrite(pRawData, dataSize, 1, pFile);
+		fclose(pFile);
+		printf("save raw data  Success !\n");
+	}
+	else
+	{
+		printf("save raw data  Failed !\n");
+	}
+}
+
 /*user API*/
 void * rgb_cb(void * argv)
 {
+	static int index;
 	os_printf("color picture handle\n");
+	img_str * entity = (img_str *)argv;
+	save_raw_data(entity->img, entity->size, "color", index++);
 	//std::shared_ptr<ob::ColorFrame> colorFrame = *(std::shared_ptr<ob::ColorFrame> *) argv;
-	//saveColor(colorFrame);
 	return NULL;
 }
 
 /*user API*/
 void * depth_cb(void * argv)
 {
+	static int index;
 	os_printf("depth picture handle\n");
-	//std::shared_ptr<ob::DepthFrame> depthFrame = *(std::shared_ptr<ob::DepthFrame> *)argv;
-	//saveDepth(depthFrame);
+	img_str * entity = (img_str *)argv;
+	save_raw_data(entity->img, entity->size, "depth", index++);
 	return NULL;
 }
 
