@@ -2,7 +2,7 @@
 v2.0.88 library 
 
 ## compile  
-'g++ main.cpp -I Include/ -I Common/ -L libs -lberxel -o color_depth' or 'make'
+'g++ main.cpp -I Include -L libs -lberxel -o color_depth' or 'make'
 
 ## how to use
 check main.cpp for example
