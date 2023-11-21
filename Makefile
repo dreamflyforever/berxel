@@ -1,7 +1,13 @@
-ARCH = x86
+ARCH := $(shell uname -m)
 include Rules.mk
 
-LOCAL_LIB_PATH = libs
+ifeq ($(ARCH),x86_64)
+    LOCAL_LIB_PATH = libs
+else ifeq ($(ARCH), aarch64)
+    LOCAL_LIB_PATH = libs_arm64
+else
+    $(error Unsupported architecture: $(ARCH))
+endif
 INCDIR = Include
 OUT_PARENT_DIR = .
 
