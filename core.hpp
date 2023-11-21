@@ -48,3 +48,8 @@ int depth_start(berxel_str * entity);
 int rgb_start(berxel_str * entity);
 int rgb_stop(berxel_str * entity);
 int berxel_run(berxel_str * entity);
+/*1: view 
+  0: close view
+*/
+int set_view(bool flag);
+bool get_view();

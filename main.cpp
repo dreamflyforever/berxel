@@ -1,19 +1,16 @@
 #include "core.hpp"
 
-void save_raw_data(uint8_t* pRawData, int dataSize , string stringName, int index)
+void save_raw_data(uint8_t* pRawData, int dataSize, string stringName, int index)
 {
 	char strRawDataName[128] =  {0};
 	sprintf(strRawDataName,"%s_%d.raw" ,stringName.c_str(),  index);
 
 	FILE* pFile = fopen(strRawDataName, "wb");
-	if(pFile)
-	{
+	if (pFile) {
 		fwrite(pRawData, dataSize, 1, pFile);
 		fclose(pFile);
 		printf("save raw data  Success !\n");
-	}
-	else
-	{
+	} else {
 		printf("save raw data  Failed !\n");
 	}
 }
@@ -43,6 +40,7 @@ void * depth_cb(void * argv)
 int main()
 {
 	berxel_str * entity;
+	set_view(1);
 	rgbd_init(&entity, rgb_cb, depth_cb);
 	rgb_start(entity);
 	depth_start(entity);

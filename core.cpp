@@ -266,7 +266,8 @@ int creatWindow(int argc, char** argv)
 {
 	g_pImageRender = new BerxelImageRender(argc, argv, "Berxel HawkColorDepth", g_imageWidth * 2 + 80 , g_imageHeight + 80); // window title & size
 	g_pImageRender->setInfoCallback(renderImage , keyCallBack);
-	g_pImageRender->startView();
+	if (get_view())
+		g_pImageRender->startView();
 	return 0;
 }
 
@@ -406,4 +407,15 @@ int rgb_stop(berxel_str * entity)
 	}
 	return retval;
 
+}
+
+bool g_view_flag;
+int set_view(bool flag)
+{
+	g_view_flag = flag;
+}
+
+bool get_view()
+{
+	return g_view_flag;
 }
