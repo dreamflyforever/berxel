@@ -1,5 +1,5 @@
 ## berxel sdk  
-v2.0.88 library 
+v2.0.122 library 
 
 ## compile  
 'g++ main.cpp -I Include -L libs -lberxel -o color_depth' or 'make'
