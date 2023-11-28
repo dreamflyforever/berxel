@@ -1,4 +1,5 @@
 #include "core.hpp"
+#include<pthread.h>
 
 #define VIEW 1
 
@@ -158,6 +159,7 @@ static bool renderImage()
 		g_pImageRender->updateView();
 	}
 #endif
+	//g_pHawkDevice->setDenoiseStatus(false);
 	// free frame
 	g_pHawkDevice->releaseFrame(pHawkColorFrame);
 	g_pHawkDevice->releaseFrame(pHawkDepthFrame);
@@ -282,10 +284,11 @@ int creatWindow(int argc, char** argv)
 	return 0;
 }
 
-int berxel_run(berxel_str * entity)
+void * berxel_pthread(void * argcv)
 {
 	int argc = 0;
 	char * argv[0];
+	berxel_str * entity = (berxel_str *)argcv;
 	if (entity != NULL) {
 		g_entity = entity;
 	} else {
@@ -301,7 +304,7 @@ int berxel_run(berxel_str * entity)
 	if((deviceCount <= 0) || (NULL == pDeviceInfo))
 	{
 		sprintf(g_errMsg,"%s", "Get No Connected BerxelDevice");
-		return creatWindow(argc ,argv);
+		return NULL;// creatWindow(argc ,argv);
 	}
 
 	g_CurrentDeviceInfo = pDeviceInfo[0];
@@ -310,7 +313,7 @@ int berxel_run(berxel_str * entity)
 	if(NULL == g_pHawkDevice)
 	{
 		sprintf(g_errMsg,"%s", "Open Berxel Device Failed");
-		return creatWindow(argc ,argv);
+		return NULL;// creatWindow(argc ,argv);
 	}
 
 	//同步当前系统时钟到设备中
@@ -344,7 +347,7 @@ int berxel_run(berxel_str * entity)
 	if(ret != 0)
 	{
 		sprintf(g_errMsg,"%s", "Open Berxel Stream Failed");
-		return creatWindow(argc ,argv);
+		return NULL;//creatWindow(argc ,argv);
 	}
 
 #if VIEW
@@ -365,9 +368,21 @@ int berxel_run(berxel_str * entity)
 	while (0 == get_view())
 		renderImage();
 
-	return Exit();
+	while (1) {
+		os_printf("berxel rgbd running\n");
+		sleep(100);
+	}
+	return NULL;//Exit();
 }
 
+int berxel_run(berxel_str * entity)
+{
+	pthread_t tidp;
+	if ((pthread_create(&tidp, NULL, berxel_pthread, (void*)entity)) == -1) {
+		printf("create error!\n");
+		return 1;
+	}
+}
 
 int rgbd_init(berxel_str ** entity, func_cb rgb, func_cb depth)
 {
