@@ -396,7 +396,7 @@ int rgbd_init(berxel_str ** entity, func_cb rgb, func_cb depth)
 	}
 	(*entity)->rgb_cb = rgb;
 	(*entity)->depth_cb = depth;
-
+	os_printf("software version 1.0.0, libberxel.so V2.0.122");
 	return retval;
 }
 

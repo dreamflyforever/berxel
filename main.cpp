@@ -22,8 +22,8 @@ void save_raw_data(uint8_t* pRawData,
 void * rgb_cb(void * argv)
 {
 	static int index;
-	os_printf("color picture handle\n");
 	img_str * entity = (img_str *)argv;
+	os_printf("color picture handle , %d\n", entity->size);
 	save_raw_data(entity->img, entity->size, "color", index++);
 	//std::shared_ptr<ob::ColorFrame> colorFrame = *(std::shared_ptr<ob::ColorFrame> *) argv;
 	return NULL;
@@ -33,8 +33,8 @@ void * rgb_cb(void * argv)
 void * depth_cb(void * argv)
 {
 	static int index;
-	os_printf("depth picture handle\n");
 	img_str * entity = (img_str *)argv;
+	os_printf("depth picture handle, %d\n", entity->size);
 	save_raw_data(entity->img, entity->size, "depth", index++);
 	return NULL;
 }
