@@ -16,3 +16,6 @@ Execute 'bash env.sh' to set environment library.
 Maybe you should do by yourself like  
 'CUR_DIR=$PWD; export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CUR_DIR/libs_arm64'  
 in the shell.
+
+## license  
+MIT by Jim
